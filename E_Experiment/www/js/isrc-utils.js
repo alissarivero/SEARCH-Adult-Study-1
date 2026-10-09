@@ -20,18 +20,34 @@ var isrcUtils = {
 
 
     /**
-     * Cordova: initialize()
+     * Run fn once Cordova is ready (or immediately in browser).
+     * Handles deviceready firing before this script loads.
      */
-    initialize: function () {
-        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+    whenCordovaReady: function (fn) {
+        if (typeof fn !== "function") return;
+        if (window.cordova && window.cordova.platformId) {
+            fn();
+            return;
+        }
+        document.addEventListener("deviceready", fn, false);
     },
 
 
     /**
-     * Cordova: onDeviceReady()
+     * Cordova: initialize()
      */
-    onDeviceReady: function () {
-        this.receivedEvent('deviceready');
+    initialize: function () {
+        var self = this;
+        self.whenCordovaReady(function () {
+            self.receivedEvent("deviceready");
+        });
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", function () {
+                if (!window.cordova) self.receivedEvent("deviceready");
+            }, false);
+        } else if (!window.cordova) {
+            self.receivedEvent("deviceready");
+        }
     },
 
 
@@ -43,7 +59,16 @@ var isrcUtils = {
         switch (id) {
             case 'deviceready':
                 this.Setup();
-                isrcUtils.SetHandlers();
+                this.SetHandlers();
+                if (typeof bootGridSearchAfterCordova === "function") {
+                    bootGridSearchAfterCordova();
+                } else {
+                    document.addEventListener("DOMContentLoaded", function () {
+                        if (typeof bootGridSearchAfterCordova === "function") {
+                            bootGridSearchAfterCordova();
+                        }
+                    }, false);
+                }
                 break;
         }
 
@@ -56,8 +81,14 @@ var isrcUtils = {
      */
     Setup: function () {
 
-        // Immersive mode
-        AndroidFullScreen.immersiveMode();
+        // Immersive mode (Android only; skip on iOS / browser)
+        try {
+            if (typeof AndroidFullScreen !== 'undefined' && AndroidFullScreen.immersiveMode) {
+                AndroidFullScreen.immersiveMode();
+            }
+        } catch (e) {
+            console.warn('AndroidFullScreen skipped:', e);
+        }
 
         // Routes setup
         var routes = document.querySelectorAll('div.route');
@@ -98,16 +129,18 @@ var isrcUtils = {
     SetHandlers: function () {
 
         isrcUtils.buttons[0] = document.getElementById('btn-initial-form');
-        if (isrcUtils.buttons[0])
+        if (isrcUtils.buttons[0] && isrcUtils.buttons[0].dataset.isrcBound !== '1') {
+            isrcUtils.buttons[0].dataset.isrcBound = '1';
             isrcUtils.buttons[0].addEventListener('click', isrcUtils.InitialFormSubmit);
+        }
 
-        isrcUtils.buttons[1] = document.getElementById('btn-app-restart');
-        if (isrcUtils.buttons[1])
-            isrcUtils.buttons[1].addEventListener('click', isrcUtils.Restart);
+        // btn-app-restart is bound in gridSearch.js (bindRestartButton) to avoid duplicate handlers.
 
         isrcUtils.buttons[2] = document.getElementById('stats-records');
-        if (isrcUtils.buttons[2])
+        if (isrcUtils.buttons[2] && isrcUtils.buttons[2].dataset.isrcBound !== '1') {
+            isrcUtils.buttons[2].dataset.isrcBound = '1';
             isrcUtils.buttons[2].addEventListener('click', isrcUtils.SaveDataToFileDialog);
+        }
 
     },
 
@@ -153,7 +186,7 @@ var isrcUtils = {
      */
     InitialFormSubmit: function () {
         var input = document.getElementById('uid-input');
-        if (input.value == null || input.value == "") return;
+        if (!input || input.value == null || input.value === "") return;
 
         isrcUtils.data.uid = input.value;
         isrcUtils.initialTimeStamp = new Date();
@@ -161,7 +194,15 @@ var isrcUtils = {
         var topbarUid = document.getElementById('user-id');
         if (topbarUid) topbarUid.innerHTML = 'User ID: ' + isrcUtils.data.uid;
 
-        isrcUtils.Goto('page1');
+        if (typeof clickStart === 'function') {
+            clickStart('rt-start', 'page1');
+            return;
+        }
+
+        var rtStart = document.getElementById('rt-start');
+        if (rtStart) rtStart.style.display = 'none';
+        var page1 = document.getElementById('page1');
+        if (page1) page1.style.display = 'block';
     },
 
 
@@ -244,6 +285,7 @@ var isrcUtils = {
     SaveAndEnd: function (stimuliData) {
         // merge data from stimuli
         isrcUtils.data = isrcUtils.ExtendObject(isrcUtils.data, stimuliData);
+        if (typeof hideAllExperimentPages === 'function') hideAllExperimentPages();
         isrcUtils.Goto('rt-end');
         isrcUtils.SaveData();
     },
@@ -252,8 +294,17 @@ var isrcUtils = {
     /**
      * Restart()
      */
-    Restart: function () {
-        location.reload();
+    Restart: function (evt) {
+        if (evt && evt.preventDefault) evt.preventDefault();
+        if (typeof restartApp === 'function') {
+            restartApp();
+            return;
+        }
+        try {
+            window.location.href = window.location.pathname + window.location.search;
+        } catch (e) {
+            window.location.reload();
+        }
     },
 
 
@@ -264,7 +315,10 @@ var isrcUtils = {
 
         var currentTimeStamp = new Date();
         isrcUtils.data.date = currentTimeStamp;
-        isrcUtils.data.duration = (currentTimeStamp - isrcUtils.initialTimeStamp) / 1000;
+        isrcUtils.data.duration =
+            isrcUtils.initialTimeStamp != null
+                ? (currentTimeStamp - isrcUtils.initialTimeStamp) / 1000
+                : 0;
        
 
         console.log('# Saving Data...');
@@ -278,22 +332,21 @@ var isrcUtils = {
 
 
     /**
-     * SaveDataToDb()
-     //Specific to tablet. Removed for publication
+     * SaveDataToDb — local backup (SQLite path removed for publication).
+     */
     SaveDataToDb: function () {
-        isrcUtils.db.transaction(function (tx) {
-            console.log('Saving data in DB');
-            console.log('with uid: ' + isrcUtils.data.uid);
-            tx.executeSql('INSERT INTO data VALUES (DateTime(\'now\'), ?,?)', [isrcUtils.data.uid, JSON.stringify(isrcUtils.data)]);
-        }, function (error) {
-            console.log('Transaction ERROR: ' + error.message);
-        }, function () {
-            console.log('Inserted final data in DB');
-            var debugOut = document.getElementById('debug-out');
-            if (debugOut) debugOut.innerHTML = debugOut.innerHTML + '<br><span style="color:red">DATA SAVED IN THE DATABASE</span>'
-        });
+        try {
+            localStorage.setItem("gridsearch-last-data", JSON.stringify(isrcUtils.data));
+        } catch (e) {
+            console.log("localStorage save failed: " + e);
+        }
+        var debugOut = document.getElementById("debug-out");
+        if (debugOut) {
+            debugOut.innerHTML =
+                (debugOut.innerHTML || "") +
+                '<br><span style="color:#6fcf6f">Session saved locally.</span>';
+        }
     },
-    */
 
 
     /**
@@ -501,7 +554,8 @@ var isrcUtils = {
      * PrintDataDebug()
      */
     PrintDataDebug: function() {
-        var debugOut = document.getElementById('debug-out');
+        var debugOut = document.getElementById("debug-out");
+        if (!debugOut) return;
         debugOut.innerHTML =
             "DATA SAVED TO DB" + "<br>" +
             "uid: " + isrcUtils.data.uid + "<br>" +
@@ -528,11 +582,11 @@ var isrcUtils = {
                 hiddenField.setAttribute("name", key);
                 hiddenField.setAttribute("value", params[key]);
 
-                form.isrcUtilsendChild(hiddenField);
+                form.appendChild(hiddenField);
             }
         }
 
-        document.body.isrcUtilsendChild(form);
+        document.body.appendChild(form);
         form.submit();
     },
 
@@ -555,16 +609,18 @@ var isrcUtils = {
         var event = evt;
         var handler = handlerFunction;
         navigator.notification.confirm(
-            'Bist du sicher?',
+            'Are you sure?',
             function (buttonIndex) {
                 if (buttonIndex === 2) return;
                 return handler(evt);
             },
-            'Bestätigen',
-            ['ja', 'nein'] 
+            'Confirm',
+            ['Yes', 'No'] 
         );
     },
 
 
 }
+
+
 isrcUtils.initialize();

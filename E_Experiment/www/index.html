@@ -1,27 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script> // NEW FOR PHYSICS SIM
-
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' ws: 'unsafe-inline' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' app: cdvfile: gap: blob: data: content: 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: content: cdvfile: blob:; media-src 'self' app: cdvfile: blob: data: content:;">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <meta name="theme-color" content="#000000">
     <title>GridSearch</title>
-
-    <!--<script src="js/jquery-3.2.1.min.js" charset="utf-8"></script>-->
-    <!--<script src="js/jquery-ui.min.js" charset="utf-8"></script>-->
-    <script src="js/d3.v3.min.js" charset="utf-8"></script>
 
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <link rel="stylesheet" type="text/css" href="css/ui.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/grid2D.css">
 
-    <script type="text/javascript" src="kernelRough.json"></script>
-    <script type="text/javascript" src="kernelSmooth.json"></script>
 </head>
 
 <body>
@@ -32,13 +25,12 @@
             <div id="topbar">GridSearch App v1.0.0 <span id="stats-records"></span> <span id="user-id"></span></div>
             <h1>Enter your code:</h1>
             <div class="initial-form">
-                <input type="number" name="uid-input" id="uid-input"><br>
+                <input type="text" name="uid-input" id="uid-input" autocomplete="off"><br>
                 <button id="btn-initial-form">Start</button>
             </div>
         </div>
         <!--First page contains Demographic Information -->
         <div class="tablet" id="page1" style="display:none; width:700px; margin: 15px auto; text-align: center;">
-            <h1 class="text-xl">Exploration Game</h1><br>
             <h3 class="text-xl">Demographic Information</h3>
             <br>
             <form>
@@ -49,51 +41,53 @@
                     <input type="radio" name="demographics-gender" id="Female">
                     <label for="Female" class="text-l">&nbsp; Female &nbsp; </label>
                 </fieldset> <br><br>
-                <fieldset data-role="Birthdate" data-type="horizontal">
-                    <legend class="text-l">Date of Birth:</legend>
-                    <input type="date" id="birthDate" class="form-control">
+                <fieldset data-role="Age" data-type="horizontal">
+                    <legend class="text-l">Age:</legend>
+                    <input type="radio" name="demographics-age" id="age4" value="4">
+                    <label for="age4" class="text-l">&nbsp; 4 &nbsp;</label>
+                    <input type="radio" name="demographics-age" id="age5" value="5">
+                    <label for="age5" class="text-l">&nbsp; 5 &nbsp;</label>
+                    <input type="radio" name="demographics-age" id="age6" value="6">
+                    <label for="age6" class="text-l">&nbsp; 6 &nbsp;</label>
+                    <input type="radio" name="demographics-age" id="age7" value="7">
+                    <label for="age7" class="text-l">&nbsp; 7 &nbsp;</label>
+                    <input type="radio" name="demographics-age" id="age8" value="8">
+                    <label for="age8" class="text-l">&nbsp; 8 &nbsp;</label>
+                    <input type="radio" name="demographics-age" id="age9" value="9">
+                    <label for="age9" class="text-l">&nbsp; 9 &nbsp;</label>
                 </fieldset><br><br>
-                <fieldset data-role="Grade" data-type="horizontal">
-                    <legend class="text-l">Grade:</legend>
-                    <select id="gradeSelect" class="text-l">
-                        <option value="0" selected="selected">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                      </select>
+                <fieldset data-role="Initials" data-type="horizontal">
+                    <legend class="text-l">Initials:</legend>
+                    <input type="text" id="initialsInput" class="form-control" maxlength="6" autocomplete="off">
+                </fieldset><br>
+                <fieldset data-role="KernelMap" data-type="horizontal">
+                    <legend class="text-l">Reward map (researcher):</legend>
+                    <input type="radio" name="kernel-map" id="kernelMapSmooth" value="smooth">
+                    <label for="kernelMapSmooth" class="text-l">&nbsp; Smooth &nbsp;</label>
+                    <input type="radio" name="kernel-map" id="kernelMapRough" value="rough">
+                    <label for="kernelMapRough" class="text-l">&nbsp; Rough &nbsp;</label>
+                    <input type="radio" name="kernel-map" id="kernelMapRandom" value="random" checked>
+                    <label for="kernelMapRandom" class="text-l">&nbsp; Random &nbsp;</label>
                 </fieldset><br>
             </form>
         
             <button class='btn-primary text-xl' type="button" name="button" id="buttonAssignScenario">Start</button>
         </div>
 
-        <div id="page2" style="display:none; text-align:center;">
-            <div id="instructions" style="display:block">
-                <h3 class="text-xl">Instructions:</h3>
-                <br>
-                <p class="text-l"> In this game, I will show you 11 different game boards. Each board consists of 64
-                    squares. When you click on a square, you will see a point value for that square.
-                    <br /> <br /> Your task is to collect as many points as possible. <br /> <br /> At the beginning of
-                    each game board, one square is already revealed. You may then click 25 times to collect as many points
-                    as possible. With each click, you have two options: Either you click on a new square to see how many points it gives. Or you click again on a
-                    <br><br>square that you have already revealed to earn points from it again. If you do that, the points for that square can
-                    change slightly each time. The number of clicks you have left is shown above the board. When you have used all your clicks, the next
-                    round begins with a new game board. <br /><br /> To help you a little, the squares are also
-                    color-coded. Darker colors correspond to higher point values. You will also get one important
-                    tip: <b>
-                On the game boards, high point values often appear next to other high point values, and low point values often appear next to other low point values! </b>                    
-                <b>The point value therefore depends on where the square is located on the board!</b> <br /><br /> On each game board
-                    you can earn up to 5 stars. The more points you collect in a round, the more stars
-                    you receive. At the end of the game, you can exchange the stars for money. How much money you receive for
-                    your stars is shown in the table next to the tablet. <br /><br /> Do you understand the rules of the game?
-                    Great — then you can start with the first game board! Please remember: you want to collect
-                    as many points as possible! </p>
-            </div>
-            <div>
-                <button class='btn-primary text-xl' type="button" name="button" id="buttonGoToPageThree">I understand</button>
+        <div id="pageConditionVideo" style="display:none; text-align:center;">
+            <div class="condition-video-shell">
+                <video id="conditionIntroVideo" class="condition-intro-video" playsinline webkit-playsinline preload="auto" disablepictureinpicture controlslist="nodownload noplaybackrate">
+                    <source id="conditionIntroVideoSource" type="video/mp4">
+                </video>
+                <button type="button" id="conditionVideoFullscreenBtn" class="condition-video-fullscreen-btn" style="display:none;">Full screen</button>
+                <div id="conditionVideoStartOverlay" class="condition-video-overlay" style="display:none;">
+                    <p class="text-l">Tap below to watch the instructions. You must watch the full video before continuing.</p>
+                    <button class="btn-primary text-xl" type="button" id="conditionVideoStartBtn">Play video</button>
+                </div>
+                <div id="conditionVideoErrorOverlay" class="condition-video-overlay" style="display:none;">
+                    <p class="text-l" id="conditionVideoErrorMessage">The instruction video could not be loaded.</p>
+                    <button class="btn-primary text-xl" type="button" id="conditionVideoRetryBtn">Try again</button>
+                </div>
             </div>
         </div>
 
@@ -103,85 +97,52 @@
             <h1 class="text-xl"> Please answer a few questions about the game before starting </h1>
 
             <div class="radio">
-                <legend class="text-xl">What is your task?</legend>
-                <label class="text-l">
-                <input type="radio" name="q1" id="q1a" value="option1" checked>
-                 &nbsp; &nbsp; Learn colors
-              </label>
+                <legend class="text-xl">1. Which rocks are better — bigger or smaller ones?</legend>
+                <label class="text-ml">
+                    <input type="radio" name="rockQ1" id="rockQ1bigger" value="bigger">
+                    &nbsp; &nbsp; Bigger ones
+                </label>
             </div>
             <div class="radio">
                 <label class="text-ml">
-                <input type="radio" name="q1" id="q1b" value="option2">
-                 &nbsp;  &nbsp; Collect as many points as possible
-              </label>
+                    <input type="radio" name="rockQ1" id="rockQ1smaller" value="smaller">
+                    &nbsp;  &nbsp; Smaller ones
+                </label>
             </div>
-            <div class="radio">
-                <label class="text-ml">
-                <input type="radio" name="q1" id="q1d" value="option4">
-                 &nbsp;  &nbsp; Find the square with the most points
-              </label>
-            </div>
-            <div class="radio">
-                <label class="text-ml">
-                <input type="radio" name="q1" id="q1c" value="option3" >
-                 &nbsp;  &nbsp; No idea
-              </label>
+
+            <div class="radio comp-check-why">
+                <legend class="text-xl">Why?</legend>
+                <textarea id="rockQ1Why" class="comp-check-why-input" rows="1" maxlength="500" autocomplete="off" inputmode="text" placeholder="Type your answer here"></textarea>
             </div>
 
             <div class="radio">
-                <legend class="text-xl">How can you collect points?</legend>
+                <legend class="text-xl">2. Are you allowed to click a square you have already clicked?</legend>
+                <label class="text-ml">
+                    <input type="radio" name="rockQ2" id="rockQ2yes" value="yes">
+                    &nbsp; &nbsp; Yes
+                </label>
             </div>
-
             <div class="radio">
                 <label class="text-ml">
-                        <input type="radio" name="q2" id="q2a" value="option1" checked>
-                        &nbsp; &nbsp; By clicking only covered squares
+                    <input type="radio" name="rockQ2" id="rockQ2no" value="no">
+                    &nbsp;  &nbsp; No
                 </label>
             </div>
 
             <div class="radio">
+                <legend class="text-xl">3. Are you allowed to click a new square?</legend>
                 <label class="text-ml">
-                        <input type="radio" name="q2" id="q2b" value="option2">
-                        &nbsp; &nbsp; By clicking only revealed squares
+                    <input type="radio" name="rockQ3" id="rockQ3yes" value="yes">
+                    &nbsp; &nbsp; Yes
                 </label>
             </div>
-
             <div class="radio">
                 <label class="text-ml">
-                        <input type="radio" name="q2" id="q2c" value="option3">
-                        &nbsp; &nbsp; By clicking covered or revealed squares
+                    <input type="radio" name="rockQ3" id="rockQ3no" value="no">
+                    &nbsp;  &nbsp; No
                 </label>
-            </div>
-
-
-            <div class="radio">
-                <legend class="text-xl">How are the points distributed?</legend>
-                <label class="text-l">
-                <input type="radio" name="q3" id="q3a" value="option1" checked>
-                 &nbsp;  &nbsp; Randomly
-              </label>
-            </div>
-            <div class="radio">
-                <label class="text-ml">
-                <input type="radio" name="q3" id="q3b" value="option2">
-                 &nbsp;  &nbsp; High point values are <strong>never</strong> next to each other
-              </label>
-            </div>
-            <div class="radio">
-                <label class="text-ml">
-                <input type="radio" name="q3" id="q3c" value="option3" >
-                 &nbsp;  &nbsp; High point values are <strong>always</strong> in the same area
-              </label>
-            </div>
-            <div class="radio">
-                <label class="text-ml">
-                <input type="radio" name="q3" id="q3d" value="option3" >
-                 &nbsp;  &nbsp; High point values are <strong>often</strong> in the same area
-
-              </label>
             </div><br>
 
-            <p class="text-l"> You can only start the game if you answer all questions correctly.</p>
             <div>
                 <button class='btn-primary text-xl' type="button" name="button" id="buttonInstructionsCheck">Check answers</button>
             </div>
@@ -191,26 +152,99 @@
         <div id="page4" style="display:none; text-align:center;">
             <br><br><br><br><br><br><br><br><br><br><br><br>
 
-            <h1 class="text-xxl">Wow! You did a great job! You answered all questions correctly and can now begin the game.</h1>
+            <h1 class="text-xxl">Great! You can now begin the practice round.</h1>
+            <p class="text-l">This first map is just for practice.</p>
             <br><br>
 
-
-
-            <button class='btn-primary text-xl' type="button" name="button" id="buttonGoToPageFive">Start</button>
+            <button class='btn-primary text-xl' type="button" name="button" id="buttonGoToPageFive">Start practice round</button>
 
 
         </div>
 
 
 
-
         <!--Experiment Begins -->
-        <div id="page5" style="width: 100%; overflow: visible; display:none">
-            <br><br>
+        <div id="page5" class="page5-game" style="width: 100%; overflow: hidden; display:none">
+            <div id="page5-main-row">
+            <div id="page5-clicks-rail" class="page5-clicks-rail" aria-hidden="true">
+                <div class="round-progress-column">
+                    <div id="roundProgressTrack" class="round-progress-track">
+                        <div id="roundProgressFill" class="round-progress-fill"></div>
+                        <span id="roundProgressLabel" class="round-progress-label" aria-live="polite">15</span>
+                    </div>
+                </div>
+            </div>
             <div id="gridDiv">
                 <table id='grid' class='grid'>
                     <tbody></tbody>
                 </table>
+            </div>
+
+            <div id="page5-progress-column" class="page5-progress-column">
+            <div id="progress">
+
+                <div class="text-xl" id="remaining1"><b>Practice Round</b><br><span class="text-s practice-round-note">This round does not count toward your score.</span></div>
+
+                <div id="sidebarInstructions">
+                    <br>
+
+                    <p id="sidebarInstructions-1" class="text-s" style="display:none">
+                        <b>This is the practice round.</b> Try it out and get used to the game!
+                        Before each click, you have to decide: Either you uncover a new square or you click again on a square that has already been uncovered. If you uncover a new square, you do not yet know how many points you will get, but you can find new squares with many points. If you click on a square that has already been uncovered, the point value will stay about the same.
+                    </p> 
+
+                    <p id="sidebarInstructions-2" class="text-l" style="display:none">
+                            <b>Great!</b><br> You have done very well so far. In the next rounds, keep trying to collect as many points as you can.
+                            <br><br>
+                            <b>Did you understand everything?</b>  
+                    </p>
+
+                    <br>
+                    <button class='btn-primary text-xl' type="button" id="buttonInstructions">Continue</button>
+                </div>
+
+                <br><br><br>
+                <div class="text-l" id="bonusSidebarInstructions" style="display:none; padding:5px; border: 3px dashed orange;">
+                    <h2>Bonus round!</h2>
+                    In this bonus round, you can first uncover only 15 squares in order to collect 
+                    as many points as possible, as usual.
+                    <br><br>
+                    After that, I will ask you a few questions and then you can continue playing as usual until all 15 clicks have been used.
+                </div>
+
+                <div class="text-l" id="bonusSidebarInstructions2" style="display:none; padding:5px; border: 3px dashed orange;">
+                    <h2>Bonus round!</h2>
+                    Now you can finish this round as usual. Remember: 
+                    you want to collect as many points as possible!
+                </div>
+
+            </div>
+            </div>
+
+            <div id="page5-right-column">
+            <div id="volcanoStagingHeader" class="volcano-staging-header" aria-hidden="true">
+                <div class="volcano-escape-path-column">
+                <div class="volcano-graphic" id="volcanoAssetContainer">
+                    <svg class="volcano-svg" viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg" role="img">
+                        <title>Volcano</title>
+                        <ellipse cx="100" cy="36" rx="58" ry="20" fill="#6e6e6e"/>
+                        <ellipse cx="68" cy="40" rx="30" ry="15" fill="#7d7d7d"/>
+                        <ellipse cx="136" cy="38" rx="34" ry="16" fill="#5a5a5a"/>
+                        <path d="M18 188 L100 52 L182 188 Z" fill="#4a4a4a"/>
+                        <path d="M32 188 L100 68 L168 188 Z" fill="#5c5c5c"/>
+                        <path d="M88 188 L100 95 L112 188 Z" fill="#ff6a00"/>
+                        <path d="M94 120 L100 78 L106 120 L102 145 Z" fill="#ff8c14"/>
+                        <ellipse cx="100" cy="158" rx="14" ry="6" fill="#ff4500" opacity="0.85"/>
+                    </svg>
+                </div>
+
+            <div id="rockStagingPanel">
+                <div id="collectedBox"></div>
+            </div>
+                </div>
+            </div>
+
+            </div>
             </div>
 
             <div id="alertGridDiv" style="display:none">
@@ -220,62 +254,10 @@
                     For each square, you should estimate how many points you would get if you clicked on it. 
                     After that, you can uncover one of the five squares and the game will continue as normal.
                     <br><br>
-                    After that, you can keep playing as usual until all 25 clicks have been used.
+                    After that, you can keep playing as usual until all 15 clicks have been used.
                     
                 </p><br><br>
                 <button class='btn-primary text-xl' type="button" name="button" id="buttonGoToBonusLevel">Continue</button>
-            </div>
-
-            <div id="progress">
-                <div id="collectedBox"></div>
-
-                <font class="text-xl" color="green"><b><div id="scoretotal"></div></b></font>
-                <div class="text-xl" id="remaining1">Remaining boards: <b>11</b></div>
-                <div class="text-xl" id="remaining2">Remaining clicks: <b>25</b></div>
-
-                <div id="sidebarInstructions">
-                    <br>
-
-                    <p id="sidebarInstructions-1" class="text-s" style="display:none">
-                        Now you can try it out briefly!
-                        Before each click, you have to decide: Either you uncover a new square or you click again on a square that has already been uncovered. If you uncover a new square, you do not yet know how many points you will get, but you can find new squares with many points. If you click on a square that has already been uncovered, the point value can change slightly, but will stay about the same.
-                    </p> 
-
-                    <p id="sidebarInstructions-2" class="text-l" style="display:none">
-                            <b>Great!</b><br> You have done very well so far! In the next rounds, you can earn up to 5 stars on each game board. The more points you collect, the more stars you receive. At the end of the game, you can exchange the stars for a small amount of money.
-                            <br><br>
-                            <b>Did you understand everything?</b>  
-                    </p>
-
-                    <br>
-                    <button class='btn-primary text-xl' type="button" id="buttonInstructions">Continue</button>
-                </div>
-
-                <div id="sidebarContent" style="display:none">
-                    <div class="text-xl"><b>Stars collected:</b></div>
-
-
-                    <div id="stars">
-
-                    </div>
-                </div>
-                
-
-                <br><br><br>
-                <div class="text-l" id="bonusSidebarInstructions" style="display:none; padding:5px; border: 3px dashed orange;">
-                    <h2>Bonus round!</h2>
-                    In this bonus round, you can first uncover only 15 squares in order to collect 
-                    as many points as possible, as usual.
-                    <br><br>
-                    After that, I will ask you a few questions and then you can continue playing as usual until all 25 clicks have been used.
-                </div>
-
-                <div class="text-l" id="bonusSidebarInstructions2" style="display:none; padding:5px; border: 3px dashed orange;">
-                    <h2>Bonus round!</h2>
-                    Now you can finish this round as usual. Remember: 
-                    you want to collect as many points as possible!
-                </div>
-
             </div>
 
             <div id="bonusProgress" style="display:none">
@@ -329,9 +311,9 @@
 
 
 
-        <div id="page5finished" style="display:none; text-align: center;">
+        <div id="page5finished" class="page5finished-interstitial" style="display:none; text-align: center;">
 
-            <div id="trials"> You explored this game board. There are 9 game boards remaining.</div>
+            <div id="trials">You finished this round.</div>
 
             <br><br>
 
@@ -339,14 +321,82 @@
                     <h2>Bonus round!</h2>
                     In this bonus round, you can first uncover only 15 squares to collect as many points as possible, as usual. After you have clicked 15 times, I will show you five squares that you have not uncovered yet. For each of these squares, you should estimate how many points you would get if you clicked on it. See if you can estimate them all correctly!
                     <br><br>
-                    After that, I will ask you a few questions and then you can continue playing as usual until all 25 clicks have been used.
+                    After that, I will ask you a few questions and then you can continue playing as usual until all 15 clicks have been used.
                 </div>
     
                 <br><br>
 
 
             <button class='btn-primary text-xl' type="button" id="nextTrialButton">Continue</button>
+            <button type="button" id="endSessionEarlyBtn" class="end-session-early-btn">end session early</button>
 
+        </div>
+
+        <div id="endSessionEarlyChooser" class="end-session-early-chooser" style="display:none;" aria-hidden="true">
+            <div class="end-session-early-chooser__panel">
+                <h2 class="text-xl">End session early</h2>
+                <p class="text-l">What would you like to do?</p>
+                <button type="button" id="endSessionEarlyCompleteBtn" class="end-session-early-option-btn">End game completely</button>
+                <button type="button" id="endSessionEarlyGiftboxBtn" class="end-session-early-option-btn">Move on to next game</button>
+                <button type="button" id="endSessionEarlyReturnBtn" class="end-session-early-option-btn end-session-early-option-btn--return">Return to rounds</button>
+            </div>
+        </div>
+
+        <div id="pageGiftbox" class="page-giftbox-game" style="display:none;">
+            <button type="button" id="giftboxStopBtn" class="giftbox-stop-btn">Stop</button>
+            <div class="giftbox-game-layout">
+                <div id="giftboxBonusInstructions" class="text-l giftbox-bonus-instructions">
+                    <h2 class="text-xl">Huge bonus rock!</h2>
+                    <p>There is a huge rock inside this box. To open the box, you have to click the box many times. If you want to stop trying to get the huge bonus rock at any time, you can press the <b>STOP</b> button to be done.</p>
+                </div>
+                <div id="giftboxStage" class="giftbox-stage">
+                    <button type="button" id="giftboxClickTarget" class="giftbox-click-target" aria-label="Box with huge bonus rock inside">
+                        <img src="images/giftbox.png" class="giftbox-img giftbox-img--box" alt="" draggable="false">
+                        <img src="images/giftbox_rock.png" class="giftbox-img giftbox-img--rock" alt="" draggable="false">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="pageGiftboxCelebrate" class="page-giftbox-celebrate" style="display:none;" aria-live="polite">
+            <canvas id="giftboxConfettiCanvas" class="giftbox-confetti-canvas"></canvas>
+            <div class="giftbox-celebrate-content">
+                <img src="images/rock.svg" class="giftbox-celebrate-rock" alt="">
+                <h1 class="giftbox-celebrate-title">You did it!</h1>
+            </div>
+        </div>
+
+        <div id="pageLikingQuestions" class="page-liking-questions" style="display:none;">
+            <div class="liking-questions-stage">
+                <div id="likingQuestionsImageFrame" class="liking-questions-image-frame">
+                    <img id="likingQuestionsImage" class="liking-questions-image" src="" alt="" draggable="false">
+                    <div id="likertClickOverlay" class="likert-click-overlay" style="display:none;" aria-hidden="true">
+                        <button type="button" class="likert-face-hit" data-likert-value="5" data-likert-label="really_like" aria-label="Really like"></button>
+                        <button type="button" class="likert-face-hit" data-likert-value="4" data-likert-label="like" aria-label="Like"></button>
+                        <button type="button" class="likert-face-hit" data-likert-value="3" data-likert-label="okay" aria-label="Okay"></button>
+                        <button type="button" class="likert-face-hit" data-likert-value="2" data-likert-label="dont_like" aria-label="Don't like"></button>
+                        <button type="button" class="likert-face-hit" data-likert-value="1" data-likert-label="really_dont_like" aria-label="Really don't like"></button>
+                    </div>
+                </div>
+            </div>
+            <div id="likingQuestionsNav" class="liking-questions-nav">
+                <div class="liking-questions-nav-slot">
+                    <button type="button" id="likingQuestionsNextBtn" class="liking-questions-nav-btn">Next</button>
+                </div>
+                <div class="liking-questions-nav-slot">
+                    <button type="button" id="likingQuestionsBackBtn" class="liking-questions-nav-btn">Back</button>
+                </div>
+            </div>
+            <div id="likertAnswerChooser" class="likert-answer-chooser" style="display:none;" aria-hidden="true">
+                <div class="likert-answer-chooser__backdrop"></div>
+                <div class="likert-answer-chooser__panel">
+                    <h2 id="likertAnswerChooserTitle" class="likert-answer-chooser__title text-xl"></h2>
+                    <div class="likert-answer-chooser__actions">
+                        <button type="button" id="likertAnswerYesBtn" class="liking-questions-nav-btn likert-answer-chooser__btn">Yes</button>
+                        <button type="button" id="likertAnswerChangeBtn" class="liking-questions-nav-btn likert-answer-chooser__btn">Change</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="page6" style="display:none; text-align: center;">
@@ -365,9 +415,9 @@
             <h2 class="text-xxl">Tester notes</h2>
             <br>
 
-            <h3 class="text-xl">Option A: </h3>
-            <input type="radio" id="otpion-a-true" name="option-a" value="1"> <span class="text-l" style="padding-right: 50px">&nbsp;&nbsp; TRUE</span> 
-            <input type="radio" id="option-a-false" name="option-a" value="0"> <span class="text-l">&nbsp;&nbsp; FALSE</span>
+            <h3 class="text-xl">Included?</h3>
+            <input type="radio" id="option-a-included" name="option-a" value="0"> <span class="text-l" style="padding-right: 50px">&nbsp;&nbsp; Included</span>
+            <input type="radio" id="option-a-not-included" name="option-a" value="1"> <span class="text-l">&nbsp;&nbsp; Not included</span>
             <br>
 
             <h3 class="text-xl">Notes: </h3>
@@ -383,13 +433,21 @@
             <h1>END</h1>
             <p id="debug-out"></p>
             <br><br>
-            <button id="btn-app-restart" onclick="location.reload();">Restart App</button>
+            <button class="btn-primary text-xl" type="button" id="btnDownloadCsv">Download CSV</button>
+            <br><br>
+            <button type="button" id="btn-app-restart">Restart App</button>
         </div>
 
 
     </div>
 
     <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/matter.min.js"></script>
+    <script type="text/javascript" src="js/d3.v3.min.js"></script>
+    <script type="text/javascript" src="kernelRough.json"></script>
+    <script type="text/javascript" src="kernelSmooth.json"></script>
+    <script type="text/javascript" src="kernelRandom.json"></script>
+    <script type="text/javascript" src="boardWeights.json"></script>
     <script type="text/javascript" src="js/isrc-utils.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript" src="js/gridSearch.js"></script>

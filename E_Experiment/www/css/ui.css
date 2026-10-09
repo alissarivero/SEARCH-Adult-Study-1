@@ -24,7 +24,8 @@ button,
 #btn-initial-form,
 #btn-app-restart {
     font-size: x-large;
-    background: seagreen;
+    background: linear-gradient(to bottom, #ff9f40, #ff5a00);
+    border: 1px solid #cc6600;
     color: white;
     padding: 18px;
     text-transform: uppercase;
@@ -77,32 +78,275 @@ select {
     border: 5px solid white;
 }
 
-#collectedBox{
- /* width: 360px;
-  height: 360px;            
-  border: 2px solid rgba(0,0,0,0.15);
-  border-radius: 12px;
-  padding: 8px;
+/* Fill Cordova/WebView when parent .container uses % height */
+body.game-play-active .container {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  max-height: 100dvh !important;
+  overflow: hidden;
   box-sizing: border-box;
+}
 
+#page5.page5-game {
+  background: #000;
+  box-sizing: border-box;
+  height: min(100dvh, 100%);
+  max-height: min(100dvh, 100%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0 6px;
+}
+
+/* Full-bleed horizontal room so the right rail can sit on the screen edge (inline .container is 95%). */
+body.page5-volcano-escape-active.game-play-active .container {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+#page5.page5-game .btn-primary {
+  background: linear-gradient(to bottom, #ff9f40, #ff5a00);
+  border: 1px solid #cc6600;
+  color: #fff;
+  font-weight: 600;
+}
+
+#page5.page5-game .btn-primary:active {
+  filter: brightness(0.95);
+}
+
+/* Clicks rail | grid | volcano + collection */
+#page5-main-row {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  grid-auto-rows: 1fr;
-  gap: 6px;
+  grid-template-columns: auto minmax(0, 1fr) minmax(150px, 220px);
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
+  justify-items: stretch;
+  gap: min(1.5vw, 12px);
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 min(8px, 1.5vw);
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 0;
+  height: calc(100% - 8px);
+  max-height: calc(100dvh - 16px);
+}
 
-  overflow: hidden;           
-  background: rgba(255,255,255,0.9); */
+/* Vertical click counter — left of grid */
+#page5-clicks-rail.page5-clicks-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  align-self: stretch;
+  min-width: 0;
+  width: 32px;
+  padding: 0 2px;
+  box-sizing: border-box;
+}
 
-/* NEW FOR PHYSICS SIM */
+#page5-clicks-rail.page5-clicks-rail .round-progress-column {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  align-self: stretch;
+  padding-top: 0;
+  padding-bottom: 0;
+}
 
-  width: 360px;
-  height: 360px;
-  border: 2px solid rgba(0,0,0,0.15);
-  border-radius: 12px;
-  background: rgba(255,255,255,0.95);
+#page5-clicks-rail.page5-clicks-rail .round-progress-track {
+  flex: 1 1 auto;
+  width: 28px;
+  height: 100%;
+  min-height: 120px;
+  max-height: none;
+}
+
+#page5-progress-column {
+  display: none;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+  justify-content: flex-start;
+}
+
+#page5-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  width: min(220px, 24vw);
+  justify-self: end;
+}
+
+/* Volcano + vertical progress (mockup: top-right) */
+.volcano-staging-header {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* Volcano + rock panel share one column so the vent lines up above the escape-path stack. */
+.volcano-escape-path-column {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.volcano-escape-path-column > .volcano-graphic {
+  flex: 0 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.volcano-graphic {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+  height: min(22vh, 140px);
+  max-height: calc(100dvh - 280px);
+}
+
+/* Volcano escape: collection rail tweaks only; volcano graphic uses the same rules as bigger reward. */
+#page5-right-column.page5-right-column--volcano-escape #rockStagingPanel {
+  margin-top: -6px;
+  width: 100%;
+  align-self: stretch;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* Escape collection: flat top so it meets the header rail cleanly. */
+#page5-right-column.page5-right-column--volcano-escape #collectedBox.collected-box--escape-path {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.volcano-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 6px 16px rgba(255, 90, 0, 0.12));
+}
+
+.round-progress-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+
+.round-progress-track {
+  width: 28px;
+  height: 100%;
+  max-height: none;
+  background: #2e2e2e;
+  border-radius: 999px;
   position: relative;
   overflow: hidden;
+  border: 2px solid #4a4a4a;
+  box-sizing: border-box;
+}
 
+.round-progress-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0%;
+  z-index: 1;
+  background: linear-gradient(to top, #ff5a00, #ff9f40);
+  border-radius: 999px;
+  transition: height 0.28s ease;
+}
+
+.round-progress-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  font-size: clamp(13px, 2.2vmin, 17px);
+  font-weight: 700;
+  color: #fff;
+  pointer-events: none;
+  text-shadow: 0 0 6px #000, 0 1px 2px #000;
+}
+
+#rockStagingPanel {
+  width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#collectedBox,
+#roundRockShowcaseBox {
+  width: 100%;
+  flex: 1 1 0;
+  /* Floor height so the staging area is never collapsed (scatter rocks need clientWidth/Height). */
+  min-height: clamp(100px, 22vh, 240px);
+  border: 1px solid #444;
+  border-radius: 10px;
+  background: #0a0a0a;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+#page5 #progress {
+  display: none;
+}
+
+#page5 #remaining1 {
+  color: #aaa;
+  margin-top: 2px;
+}
+
+#page5 #remaining1 b {
+  color: #eee;
+}
+
+#page5 #remaining1 .practice-round-note {
+  display: block;
+  margin-top: 6px;
+  color: #ff9f40;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+#collectedBox.collected-box--bigger-reward,
+#roundRockShowcaseBox.collected-box--bigger-reward {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Each slot must have size or it collapses */
@@ -138,4 +382,937 @@ select {
 .fly-circle svg{
   width: 100%;
   height: 100%;
+}
+
+.fly-rock {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 10000;
+  transition: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.fly-rock *,
+.fly-rock *::before,
+.fly-rock *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Match table.grid td + .rock-grid-surface: w×w host, SVG 100%×100% (see grid2D.css for td). */
+.fly-rock .rock-grid-surface,
+.rock-grid-surface {
+  display: block;
+  line-height: 0;
+  font-size: 0;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.fly-rock .rock-grid-surface .cell-svg,
+.rock-grid-surface .cell-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  vertical-align: top;
+}
+
+/* Collection / escape: non-square host (tight viewBox); board td remains w×w. */
+.rock-grid-surface--collection {
+  overflow: visible;
+}
+
+/* Volcano escape: flex column; each .rock-grid-surface is w×w like a grid cell. */
+#collectedBox.collected-box--escape-path,
+#roundRockShowcaseBox.collected-box--escape-path {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  /* Must match COLLECTION_STACK_GAP_PX in gridSearch.js (non-overlapping stack: slot height + gap). */
+  gap: 5px;
+  row-gap: 5px;
+  column-gap: 0;
+  /* Inner width should stay ≥ one grid cell edge; avoid max-width on rocks. */
+  padding: 0 3px;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: center;
+  font-size: 0;
+  line-height: 0;
+  background:
+    linear-gradient(to left, rgba(255, 90, 0, 0.07) 0%, transparent 50%),
+    #0a0a0a;
+  border-left: 2px dashed rgba(255, 140, 60, 0.35);
+}
+
+.escape-path-rock {
+  flex: 0 0 auto;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+  line-height: 0;
+  vertical-align: top;
+}
+
+/* One w×w row per rock; flex gap spaces rows (no overlap). */
+.collected-box--escape-path .escape-path-rock {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.scatter-rock {
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  font-size: 0;
+  animation: rock-slide-in 0.4s ease-out forwards;
+}
+
+.escape-path-rock {
+  animation: rock-path-in 0.3s ease-out forwards;
+}
+
+.round-rock-showcase {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  transition: opacity 0.16s ease-out;
+  pointer-events: all;
+  z-index: 30000;
+}
+
+.round-rock-showcase.is-visible {
+  opacity: 1;
+}
+
+.round-rock-showcase__panel {
+  width: min(420px, 70vw);
+  height: 90vh;
+  border: 1px solid rgba(255, 140, 20, 0.38);
+  border-radius: 0;
+  background: #0a0a0a;
+  box-shadow: none;
+  padding: 24px 20px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.round-rock-showcase__panel--volcano-escape {
+  background: linear-gradient(to left, rgba(255, 90, 0, 0.08) 0%, transparent 45%), #0a0a0a;
+}
+
+.round-rock-showcase__panel--bigger-reward {
+  background: #0a0a0a;
+}
+
+.round-rock-showcase__title {
+  text-align: center;
+  color: #eee;
+  font-size: 24px;
+  margin-bottom: 16px;
+  letter-spacing: 0.2px;
+}
+
+#roundRockShowcaseBox {
+  width: 100%;
+  max-height: calc(90vh - 120px) !important;
+  min-height: 200px !important;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@keyframes rock-path-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rock-slide-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+#alertGridDiv {
+  clear: both;
+  max-width: 730px;
+  margin: 16px auto 0 auto;
+  text-align: center;
+  color: #ddd;
+}
+
+#page5 #bonusSidebarInstructions,
+#page5 #bonusSidebarInstructions2 {
+  border-color: #ff8c14 !important;
+  color: #ddd;
+  background: rgba(255, 140, 20, 0.06);
+}
+
+/* Comprehension check — must stay visible outside game-play layout */
+#pageConditionVideo {
+  padding: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+body.condition-video-inline-wide .container {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  max-height: 100dvh !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+body.condition-video-inline-wide #pageConditionVideo {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  min-height: 100dvh;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  box-sizing: border-box;
+}
+
+body.condition-video-inline-wide .condition-video-shell {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+body.condition-video-inline-wide .condition-intro-video {
+  width: 100%;
+  max-width: none;
+  border-radius: 0;
+  margin: 0;
+}
+
+body.condition-video-inline-wide .condition-video-overlay {
+  border-radius: 0;
+}
+
+.condition-video-shell {
+  position: relative;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.condition-intro-video {
+  width: 100%;
+  max-width: 860px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  background: #000;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.condition-video-fullscreen-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  z-index: 2;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.condition-video-fullscreen-btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.condition-video-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.82);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.condition-video-overlay p {
+  margin: 0;
+  color: #f5f5f5;
+  max-width: 36rem;
+}
+
+#page3 {
+  padding: 20px 24px 32px;
+  max-width: 760px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow-y: auto;
+  max-height: 100dvh;
+  -webkit-overflow-scrolling: touch;
+}
+
+body:not(.game-play-active) .container {
+  overflow-y: auto;
+  max-height: 100dvh;
+}
+
+#page3 .radio {
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+#page3 .radio label {
+  display: block;
+  margin: 6px 0 6px 12px;
+}
+
+#page3 .radio legend {
+  display: block;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+#page3 .comp-check-why-input {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  margin: 6px 0 6px 12px;
+  padding: 10px 12px;
+  font-size: 18px;
+  font-family: inherit;
+  box-sizing: border-box;
+  resize: none;
+  overflow-y: hidden;
+  min-height: 2.6em;
+  line-height: 1.35;
+  field-sizing: content;
+}
+
+/* Experimenter-only control on between-round screen */
+.page5finished-interstitial {
+  position: relative;
+  min-height: min(100dvh, 100%);
+}
+
+#page5finished .end-session-early-btn {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 50000;
+  margin: 0;
+  padding: 6px 10px;
+  font-size: 11px !important;
+  font-weight: normal;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  color: #5c5c5c !important;
+  background: rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: 4px;
+  box-shadow: none;
+  cursor: pointer;
+  opacity: 0.72;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.end-session-early-chooser {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 60000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.end-session-early-chooser.is-visible {
+  display: flex;
+}
+
+.end-session-early-chooser__panel {
+  width: min(420px, 92vw);
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 24px 20px;
+  text-align: center;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+}
+
+.end-session-early-chooser__panel h2 {
+  margin: 0 0 8px;
+}
+
+.end-session-early-chooser__panel p {
+  margin: 0 0 18px;
+}
+
+.end-session-early-option-btn {
+  display: block;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 14px 16px;
+  font-size: 18px !important;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.end-session-early-option-btn--return {
+  background: #eee !important;
+  color: #333 !important;
+  border: 1px solid #bbb !important;
+}
+
+#page5finished .end-session-early-btn:hover,
+#page5finished .end-session-early-btn:focus {
+  color: #333 !important;
+  background: rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
+  opacity: 1;
+  outline: none;
+}
+
+/* Huge bonus rock game (after all grid rounds; bonus-round styling) */
+body.giftbox-game-active {
+  background: #000 !important;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body.giftbox-game-active .container {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: #000 !important;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#pageGiftbox.page-giftbox-game {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-height: 100dvh;
+  overflow: hidden;
+  background: #000;
+  border: none;
+  box-sizing: border-box;
+}
+
+.giftbox-game-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  max-height: 100dvh;
+  overflow: hidden;
+  padding: 56px 16px 24px;
+  box-sizing: border-box;
+}
+
+.giftbox-bonus-instructions {
+  max-width: 640px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 3px dashed orange;
+  color: #ddd;
+  background: rgba(255, 140, 20, 0.06);
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.giftbox-bonus-instructions h2 {
+  margin: 0 0 10px 0;
+  color: #ff8c14;
+}
+
+.giftbox-bonus-instructions p {
+  margin: 0 0 10px 0;
+}
+
+.giftbox-bonus-instructions p:last-child {
+  margin-bottom: 0;
+}
+
+.giftbox-stop-btn {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1000;
+  font-size: x-large;
+  background: linear-gradient(to bottom, #ff9f40, #ff5a00);
+  border: 1px solid #cc6600;
+  color: white;
+  padding: 14px 22px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.giftbox-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.giftbox-click-target {
+  position: relative;
+  width: min(78vw, 520px);
+  height: min(78vw, 520px);
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: default;
+  transform-origin: 50% 50%;
+}
+
+.giftbox-click-target.giftbox-click-target--ready {
+  cursor: pointer;
+}
+
+.giftbox-click-target--locked {
+  pointer-events: none;
+}
+
+.giftbox-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.giftbox-img--box {
+  opacity: 1;
+}
+
+.giftbox-img--rock {
+  opacity: 0;
+}
+
+.giftbox-click-target--intro .giftbox-img--box {
+  animation: giftboxFadeBox 6s ease-in-out 1 forwards;
+}
+
+.giftbox-click-target--intro .giftbox-img--rock {
+  animation: giftboxFadeRock 6s ease-in-out 1 forwards;
+}
+
+/* Symmetric intro: 25% hold box, 25% fade to rock, 25% hold rock, 25% fade back to box */
+@keyframes giftboxFadeBox {
+  0%,
+  25% {
+    opacity: 1;
+  }
+  50%,
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes giftboxFadeRock {
+  0%,
+  25% {
+    opacity: 0;
+  }
+  50%,
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes giftboxJiggle {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  20% {
+    transform: rotate(-5deg) scale(1.03);
+  }
+  40% {
+    transform: rotate(5deg) scale(1.03);
+  }
+  60% {
+    transform: rotate(-3deg) scale(1.02);
+  }
+  80% {
+    transform: rotate(3deg) scale(1.02);
+  }
+}
+
+.giftbox-click-target.giftbox-jiggle {
+  animation: giftboxJiggle 0.4s ease-in-out;
+}
+
+/* After huge bonus rock: celebration before thank-you */
+#pageGiftboxCelebrate.page-giftbox-celebrate {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.giftbox-confetti-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.giftbox-celebrate-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 100%;
+  padding: 0 16px 10vh;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.giftbox-celebrate-rock {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(88vw, 560px);
+  height: min(88vw, 560px);
+  object-fit: contain;
+  margin: 0;
+  transform: translate(-50%, -58%) scale(4);
+  transform-origin: center center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.giftbox-celebrate-title {
+  position: relative;
+  z-index: 3;
+  margin: 0;
+  font-size: clamp(2.75rem, 12vw, 5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.02em;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+}
+
+body.liking-questions-active {
+  background: #000 !important;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body.liking-questions-active .container {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: #000 !important;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#pageLikingQuestions.page-liking-questions {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-height: 100dvh;
+  overflow: hidden;
+  padding: 12px 100px 12px 12px;
+  box-sizing: border-box;
+  background: #000;
+}
+
+.liking-questions-stage {
+  position: relative;
+  width: min(96vw, 1100px);
+  max-height: calc(100dvh - 24px);
+  margin: 0 auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.liking-questions-image-frame {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  max-height: calc(100dvh - 24px);
+  line-height: 0;
+}
+
+.liking-questions-image {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100dvh - 24px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #000;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.liking-questions-nav {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  bottom: auto;
+  left: auto;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 8px;
+  box-sizing: border-box;
+  transform: translateY(-50%);
+  background: transparent;
+}
+
+.liking-questions-nav-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: calc(120px + 56px);
+  width: calc(1em + 28px);
+}
+
+.liking-questions-nav-btn {
+  font-size: x-large;
+  background: linear-gradient(to bottom, #ff9f40, #ff5a00);
+  border: 1px solid #cc6600;
+  color: white;
+  padding: 14px 28px;
+  min-width: 120px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transform: rotate(-90deg);
+  transform-origin: center center;
+  flex-shrink: 0;
+}
+
+.liking-questions-nav-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: rotate(-90deg);
+}
+
+.likert-click-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.likert-face-hit {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.001);
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+
+.likert-face-hit:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.likert-face-hit--selected {
+  box-shadow: 0 0 0 4px #fff, 0 0 18px rgba(255, 255, 255, 0.85);
+}
+
+.likert-face-hit[data-likert-value="5"] {
+  left: 12.1%;
+  top: 75.7%;
+  width: 17.4%;
+  height: 31.2%;
+}
+
+.likert-face-hit[data-likert-value="4"] {
+  left: 30.6%;
+  top: 75.5%;
+  width: 17.4%;
+  height: 31.2%;
+}
+
+.likert-face-hit[data-likert-value="3"] {
+  left: 49.6%;
+  top: 75.6%;
+  width: 17.5%;
+  height: 31.2%;
+}
+
+.likert-face-hit[data-likert-value="2"] {
+  left: 68.8%;
+  top: 75.6%;
+  width: 17.5%;
+  height: 31.2%;
+}
+
+.likert-face-hit[data-likert-value="1"] {
+  left: 88.0%;
+  top: 75.6%;
+  width: 17.4%;
+  height: 31.2%;
+}
+
+.likert-answer-chooser {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 65000;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.likert-answer-chooser.is-visible {
+  display: block;
+}
+
+.likert-answer-chooser__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+.likert-answer-chooser__panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px 32px;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center center;
+  background: #000;
+  border: 2px solid #ff8c14;
+  border-radius: 8px;
+  pointer-events: auto;
+  text-align: center;
+  min-width: min(90vw, 360px);
+}
+
+.likert-answer-chooser__title {
+  margin: 0;
+  padding: 0;
+  font-size: x-large;
+  font-weight: 600;
+  color: #fff;
+  white-space: normal;
+}
+
+.likert-answer-chooser__actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.likert-answer-chooser__btn {
+  flex-shrink: 0;
+  transform: none;
 }

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="de.mpg.gridsearch" version="1.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="de.mpg.gridsearch" version="1.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>GridSearch</name>
     <description>
         GridSearch app.
@@ -21,10 +21,25 @@
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <preference name="scheme" value="app" />
+        <preference name="hostname" value="localhost" />
+        <icon src="res/icon/ios/icon-1024.png" width="1024" height="1024" />
+        <icon src="res/icon/ios/icon-72-2x.png" width="144" height="144" />
+        <icon src="res/icon/ios/icon-72.png" width="72" height="72" />
+        <icon src="res/icon/ios/icon-57-2x.png" width="114" height="114" />
+        <icon src="res/icon/ios/icon-57.png" width="57" height="57" />
+        <edit-config file="*-Info.plist" mode="merge" target="UIFileSharingEnabled">
+            <true />
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="LSSupportsOpeningDocumentsInPlace">
+            <true />
+        </edit-config>
     </platform>
     <preference name="DisallowOverscroll" value="true" />
     <preference name="Orientation" value="landscape" />
-    <plugin name="cordova-plugin-browsersync" spec="^0.1.6" />
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarBackgroundColor" value="#000000" />
+    <preference name="StatusBarStyle" value="lightcontent" />
     <plugin name="cordova-plugin-dialogs" spec="^1.3.3" />
     <plugin name="cordova-plugin-file" spec="^4.3.3" />
     <plugin name="cordova-plugin-fullscreen" spec="^1.2.0" />

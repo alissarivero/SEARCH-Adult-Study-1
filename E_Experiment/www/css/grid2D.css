@@ -23,12 +23,16 @@
   color: yellow !important;
 }
 
-#birthDate {
-  width: 50%;
+
+#initialsInput {
+  width: 7ch;
+  max-width: 40%;
   display: inline-block;
-  height: 50px;
-  font-size: 28px;
+  height: 40px;
+  font-size: 22px;
   text-align: center;
+  padding-left: 0.35em;
+  padding-right: 0.35em;
 }
 
 #grid {
@@ -39,8 +43,77 @@
 
 
 #gridDiv {
-  float: left;
-  width: 730px;
+  float: none;
+  min-width: 0;
+  min-height: 0;
+  display: block;
+}
+
+/*
+  Game board: one shared min() for width & height => always square, fits iPad 11" without scroll.
+  #page5-main-row is a CSS grid with a defined height so this stays in view.
+*/
+#page5-main-row > #gridDiv {
+  justify-self: center;
+  align-self: center;
+}
+
+#page5.page5-game #gridDiv {
+  background: #000;
+  padding: 5px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+}
+
+#page5.page5-game #gridDiv.grid-click-limit-reached::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 50;
+  pointer-events: all;
+}
+
+#page5.page5-game #grid {
+  border: 2px solid #fff;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: auto;
+  height: auto;
+  table-layout: fixed;
+  margin: 0 auto;
+}
+
+/* Row height is set in JS (sizeGridToViewport) so cells stay square; do not use height:auto here. */
+#page5.page5-game #grid tbody,
+#page5.page5-game #grid tr {
+  height: auto;
+}
+
+#page5.page5-game .grid td {
+  border: 1px solid rgba(255, 255, 255, 0.88) !important;
+  background: #000 !important;
+  color: #eee;
+  /* Let gridSearch.js set equal width/height per cell (do not use width/height:auto !important — it overrides inline sizes). */
+  aspect-ratio: 1 / 1;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  vertical-align: middle;
+}
+
+#page5.page5-game .grid td.highlight {
+  box-shadow: inset 0 0 0 2px #ff7a18;
+  color: inherit !important;
+}
+
+#page5.page5-game #alertGridDiv {
+  color: #ddd;
 }
 
 #alertGridDiv {
@@ -51,9 +124,10 @@
 }
 
 #progress {
-  float: left;
-  margin-left: 45px;
-  width: 326px;
+  float: none;
+  margin-left: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 #bonusProgress {
@@ -149,51 +223,20 @@ input[type=radio] {
   border-radius: 22px;
   border: 1px solid #bbb;
   margin: 1px 0 0;
+  /* Match app orange (buttons / volcano) instead of system blue when selected */
+  accent-color: #ff5a00;
+  color: #ff5a00;
 }
 
-#stars {}
-
-.star-ratings-css {
-  width: 220px;
-  height: 42px;
-  unicode-bidi: bidi-override;
-  color: #c5c5c5;
-  font-size: 50px;
-  margin: 0 auto;
-  position: relative;
-  padding: 0;
-  text-shadow: 0px 1px 0 #a2a2a2;
+input[type=radio]:focus-visible {
+  outline: 2px solid rgba(255, 90, 0, 0.45);
+  outline-offset: 2px;
 }
 
-.star-ratings-css-top {
-  width: 220px;
-  height: 42px;
-  background-image: url(../img/stars-top.png);
-  background-size: 220px 42px;
-  color: #e7711b;
-  padding: 0;
-  position: absolute;
-  z-index: 1;
-  display: block;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  text-align: left;
+input[type=checkbox] {
+  accent-color: #ff5a00;
+  color: #ff5a00;
 }
-
-.star-ratings-css-bottom {
-  width: 220px;
-  height: 42px;
-  background-image: url(../img/stars-bottom.png);
-  background-size: 220px 42px;
-  padding: 0;
-  display: block;
-  z-index: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
 
 /* SLIDERS */
 input[type=range] {
